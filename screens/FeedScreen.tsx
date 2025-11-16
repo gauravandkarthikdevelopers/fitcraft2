@@ -101,6 +101,141 @@ const LogWorkoutModal = ({ isOpen, onClose, onLog }: any) => {
     );
 };
 
+const CommentModal = ({ isOpen, onClose, post, onAddComment }: any) => {
+    const [newComment, setNewComment] = useState('');
+    const [comments, setComments] = useState(post?.commentsList || []);
+
+    // Update comments when post changes
+    React.useEffect(() => {
+        if (post?.commentsList) {
+            setComments(post.commentsList);
+        }
+    }, [post]);
+
+    if (!isOpen || !post) return null;
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (newComment.trim()) {
+            const comment = {
+                id: Date.now(),
+                author: 'You',
+                avatar: '/WhatsApp Image 2025-11-11 at 01.33.52.jpeg',
+                text: newComment,
+                timestamp: 'Just now',
+                likes: 0,
+                isLiked: false
+            };
+            const updatedComments = [...comments, comment];
+            setComments(updatedComments);
+            setNewComment('');
+            onAddComment(post.id, updatedComments.length, updatedComments);
+        }
+    };
+
+    const handleLikeComment = (commentId: number) => {
+        setComments(comments.map((comment: any) => 
+            comment.id === commentId 
+                ? { ...comment, likes: comment.likes + 1, isLiked: !comment.isLiked }
+                : comment
+        ));
+    };
+
+    return (
+        <div
+            className="fixed inset-0 bg-black/70 backdrop-blur-md flex justify-center items-end z-50 animate-fade-in"
+            onClick={onClose}
+            role="dialog"
+            aria-modal="true"
+        >
+            <div
+                className="card-elevated w-full max-w-md rounded-t-3xl max-h-[85vh] flex flex-col animate-scale-in mb-24"
+                onClick={e => e.stopPropagation()}
+            >
+                {/* Header */}
+                <div className="flex justify-between items-center p-6 border-b border-white/10">
+                    <h2 className="text-title text-white">Comments</h2>
+                    <button 
+                        onClick={onClose} 
+                        className="text-gray-400 hover:text-white hover:bg-white/10 rounded-full p-2 transition-all duration-200" 
+                        aria-label="Close"
+                    >
+                        <span className="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+
+                {/* Comments List */}
+                <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                    {comments.length === 0 ? (
+                        <div className="text-center py-8">
+                            <span className="material-symbols-outlined text-gray-500 text-5xl mb-3">chat_bubble_outline</span>
+                            <p className="text-gray-400">No comments yet. Be the first to comment!</p>
+                        </div>
+                    ) : (
+                        comments.map((comment: any) => (
+                            <div key={comment.id} className="flex gap-3">
+                                <img 
+                                    src={comment.avatar} 
+                                    alt={comment.author}
+                                    className="w-10 h-10 rounded-full border-2 border-orange-400/50 flex-shrink-0"
+                                />
+                                <div className="flex-1">
+                                    <div className="card-flat p-3 rounded-2xl">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <p className="font-bold text-white text-sm">{comment.author}</p>
+                                            <p className="text-xs text-gray-400">{comment.timestamp}</p>
+                                        </div>
+                                        <p className="text-white text-sm">{comment.text}</p>
+                                    </div>
+                                    <div className="flex items-center gap-4 mt-2 ml-2">
+                                        <button
+                                            onClick={() => handleLikeComment(comment.id)}
+                                            className="flex items-center gap-1 text-gray-400 hover:text-red-400 transition-colors"
+                                        >
+                                            <span className="material-symbols-outlined text-lg">favorite_border</span>
+                                            <span className="text-xs">{comment.likes || 0}</span>
+                                        </button>
+                                        <button className="text-gray-400 hover:text-orange-400 transition-colors text-xs">
+                                            Reply
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+
+                {/* Comment Input */}
+                <form onSubmit={handleSubmit} className="p-4 pb-6 border-t border-white/10">
+                    <div className="flex gap-3 items-end">
+                        <img 
+                            src="/WhatsApp Image 2025-11-11 at 01.33.52.jpeg" 
+                            alt="Your avatar"
+                            className="w-10 h-10 rounded-full border-2 border-orange-400/50 flex-shrink-0"
+                        />
+                        <div className="flex-1">
+                            <textarea
+                                value={newComment}
+                                onChange={(e) => setNewComment(e.target.value)}
+                                placeholder="Add a comment..."
+                                rows={2}
+                                className="input-outlined w-full resize-none text-sm"
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            disabled={!newComment.trim()}
+                            className="btn-primary px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                        >
+                            <span className="material-symbols-outlined">send</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
 const initialPosts = [
     {
         id: 1,
@@ -115,7 +250,36 @@ const initialPosts = [
         ],
         likes: 12,
         comments: 5,
-        isLiked: false
+        isLiked: false,
+        commentsList: [
+            {
+                id: 1,
+                author: 'Alex Johnson',
+                avatar: '/WhatsApp Image 2025-11-11 at 01.33.52.jpeg',
+                text: 'Amazing work! Keep it up! 💪',
+                timestamp: '1h ago',
+                likes: 3,
+                isLiked: false
+            },
+            {
+                id: 2,
+                author: 'Sarah Miller',
+                avatar: '/WhatsApp Image 2025-11-11 at 01.33.52.jpeg',
+                text: 'You inspire me to run more! 🏃‍♀️',
+                timestamp: '45m ago',
+                likes: 1,
+                isLiked: false
+            },
+            {
+                id: 3,
+                author: 'Mike Chen',
+                avatar: '/WhatsApp Image 2025-11-11 at 01.33.52.jpeg',
+                text: 'Great pace! What\'s your secret?',
+                timestamp: '30m ago',
+                likes: 0,
+                isLiked: false
+            }
+        ]
     },
     {
         id: 2,
@@ -126,7 +290,27 @@ const initialPosts = [
         image: '/WhatsApp Image 2025-11-11 at 01.41.34.jpeg',
         likes: 78,
         comments: 12,
-        isLiked: true
+        isLiked: true,
+        commentsList: [
+            {
+                id: 1,
+                author: 'Emma Wilson',
+                avatar: '/WhatsApp Image 2025-11-11 at 01.33.52.jpeg',
+                text: 'Incredible progress! 🔥',
+                timestamp: '2h ago',
+                likes: 5,
+                isLiked: false
+            },
+            {
+                id: 2,
+                author: 'David Brown',
+                avatar: '/WhatsApp Image 2025-11-11 at 01.33.52.jpeg',
+                text: 'What weight did you hit?',
+                timestamp: '1h ago',
+                likes: 2,
+                isLiked: false
+            }
+        ]
     }
 ];
 
@@ -139,6 +323,8 @@ const recentWorkouts = [
 const FeedScreen: React.FC = () => {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+    const [selectedPost, setSelectedPost] = useState<any>(null);
     const [posts, setPosts] = useState(initialPosts);
 
     const handleLogWorkout = () => {
@@ -159,8 +345,33 @@ const FeedScreen: React.FC = () => {
         }));
     };
 
-    const handleComment = () => {
-        alert('Comment functionality is coming soon!');
+    const handleComment = (post: any) => {
+        setSelectedPost(post);
+        setIsCommentModalOpen(true);
+    };
+
+    const handleAddComment = (postId: number, newCommentCount: number, updatedCommentsList: any[]) => {
+        setPosts(posts.map(post => {
+            if (post.id === postId) {
+                return {
+                    ...post,
+                    comments: newCommentCount,
+                    commentsList: updatedCommentsList
+                };
+            }
+            return post;
+        }));
+        // Update selectedPost to reflect new comments
+        setSelectedPost((prev: any) => {
+            if (prev && prev.id === postId) {
+                return {
+                    ...prev,
+                    comments: newCommentCount,
+                    commentsList: updatedCommentsList
+                };
+            }
+            return prev;
+        });
     };
 
     return (
@@ -283,7 +494,7 @@ const FeedScreen: React.FC = () => {
                                             <span className="font-semibold">{post.likes}</span>
                                         </button>
                                         <button 
-                                            onClick={handleComment} 
+                                            onClick={() => handleComment(post)} 
                                             className="flex items-center gap-2 transition-all duration-300 hover:scale-110 hover:text-orange-400"
                                         >
                                             <span className="material-symbols-outlined text-2xl">chat_bubble_outline</span>
@@ -350,7 +561,7 @@ const FeedScreen: React.FC = () => {
                                             <span className="font-semibold">{post.likes}</span>
                                         </button>
                                         <button 
-                                            onClick={handleComment} 
+                                            onClick={() => handleComment(post)} 
                                             className="flex items-center gap-2 transition-all duration-300 hover:scale-110 hover:text-orange-400"
                                         >
                                             <span className="material-symbols-outlined text-2xl">chat_bubble_outline</span>
@@ -397,6 +608,15 @@ const FeedScreen: React.FC = () => {
                 </div>
             </div>
             <LogWorkoutModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onLog={handleLogWorkout} />
+            <CommentModal 
+                isOpen={isCommentModalOpen} 
+                onClose={() => {
+                    setIsCommentModalOpen(false);
+                    setSelectedPost(null);
+                }} 
+                post={selectedPost}
+                onAddComment={handleAddComment}
+            />
         </>
     );
 };
