@@ -9,6 +9,10 @@ import FeedScreen from './screens/FeedScreen';
 import StatsScreen from './screens/StatsScreen';
 import NutritionScreen from './screens/NutritionScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import ExploreNFTsScreen from './screens/ExploreNFTsScreen';
+import ProcrafterScreen from './screens/ProcrafterScreen';
+import EaseScreen from './screens/EaseScreen';
+import CreatePostScreen from './screens/CreatePostScreen';
 
 const App: React.FC = () => {
   return (
@@ -24,6 +28,10 @@ const App: React.FC = () => {
           <Route path="stats" element={<StatsScreen />} />
           <Route path="nutrition" element={<NutritionScreen />} />
           <Route path="profile" element={<ProfileScreen />} />
+          <Route path="explore-nfts" element={<ExploreNFTsScreen />} />
+          <Route path="procrafter" element={<ProcrafterScreen />} />
+          <Route path="ease" element={<EaseScreen />} />
+          <Route path="create-post" element={<CreatePostScreen />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

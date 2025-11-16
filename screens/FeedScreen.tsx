@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const LogWorkoutModal = ({ isOpen, onClose, onLog }: any) => {
     if (!isOpen) return null;
@@ -136,6 +137,7 @@ const recentWorkouts = [
 ];
 
 const FeedScreen: React.FC = () => {
+    const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [posts, setPosts] = useState(initialPosts);
 
@@ -164,6 +166,30 @@ const FeedScreen: React.FC = () => {
     return (
         <>
             <div className="p-5 sm:p-6 pb-32">
+                {/* Navigation Circles */}
+                <div className="flex gap-3 mb-6 justify-center">
+                    <button
+                        onClick={() => navigate('/app/feed')}
+                        className="w-12 h-12 rounded-full bg-gray-600 hover:bg-gray-500 transition-colors border-2 border-gray-400"
+                        aria-label="Feed"
+                    />
+                    <button
+                        onClick={() => navigate('/app/explore-nfts')}
+                        className="w-12 h-12 rounded-full bg-purple-600 hover:bg-purple-500 transition-colors"
+                        aria-label="Explore NFTs"
+                    />
+                    <button
+                        onClick={() => navigate('/app/procrafter')}
+                        className="w-12 h-12 rounded-full bg-teal-500 hover:bg-teal-400 transition-colors"
+                        aria-label="Procrafter"
+                    />
+                    <button
+                        onClick={() => navigate('/app/ease')}
+                        className="w-12 h-12 rounded-full bg-green-600 hover:bg-green-500 transition-colors"
+                        aria-label="Ease"
+                    />
+                </div>
+
                 {/* Header - NEW STYLE */}
                 <header className="flex justify-between items-center mb-8 animate-fade-in-up">
                     <div>
@@ -179,6 +205,17 @@ const FeedScreen: React.FC = () => {
                         <span className="font-bold">Log</span>
                     </button>
                 </header>
+
+                {/* Create Post Button */}
+                <div className="flex justify-end mb-6">
+                    <button
+                        onClick={() => navigate('/app/create-post')}
+                        className="btn-floating fixed bottom-28 right-6 z-40 shadow-lg"
+                        aria-label="Create new post"
+                    >
+                        <span className="material-symbols-outlined text-2xl">add</span>
+                    </button>
+                </div>
 
                 {/* Posts - NEW CARD STYLES */}
                 <div className="space-y-6">
